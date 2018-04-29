@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -79,6 +80,40 @@ public class EmployeeController {
 		return "registrationsuccess";
 	}
 	
+    /*
+     * This method will provide the medium to update an existing employee.
+     */
+	@RequestMapping(value = { "/edit-{ssn}-employee" }, method = RequestMethod.GET)
+	public String editEmployee(@PathVariable String ssn, ModelMap model) {
+		Employee employee = service.findBySsn(ssn);
+		model.addAttribute("employee", employee);
+		model.addAttribute("edit", true);
+		return "registration";
+	}
+	
+    /*
+     * This method will be called on form submission, handling POST request for
+     * updating employee in database. It also validates the user input
+     */
+	@RequestMapping(value = { "/edit-{ssn}-employee" }, method = RequestMethod.POST)
+	public String updateEmployee(@Valid Employee employee, BindingResult result,
+			ModelMap model, @PathVariable String ssn) {
+		
+		if(result.hasErrors()) {
+			return "registration";
+		}
+		
+		if(!service.isEmployeeSsnUnique(employee.getId(), employee.getSsn())) {
+			FieldError ssnError = new FieldError("employee", "ssn", messageSource.getMessage("non.unique.ssn", new String[] {employee.getSsn()}, Locale.getDefault()));
+			result.addError(ssnError);
+			return "registration";
+		}
+		
+		service.updateEmployee(employee);
+		
+		model.addAttribute("success", "Employee " + employee.getName() + " updated succesfully");
+		return "registrationsuccess";
+	}
 	
 	
 }
