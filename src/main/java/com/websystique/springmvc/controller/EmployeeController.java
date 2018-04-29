@@ -24,13 +24,13 @@ public class EmployeeController {
 
 	@Autowired
 	EmployeeService service;
-	
+
 	@Autowired
 	MessageSource messageSource;
-	
-    /*
-     * This method will list all existing employees.
-     */
+
+	/*
+	 * This method will list all existing employees.
+	 */
 	@RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
 	public String listEmployees(ModelMap model) {
 		List<Employee> employees = service.findAllEmployees();
@@ -38,9 +38,9 @@ public class EmployeeController {
 		return "allemployees";
 	}
 
-    /*
-     * This method will provide the medium to add a new employee.
-     */
+	/*
+	 * This method will provide the medium to add a new employee.
+	 */
 	@RequestMapping(value = { "/new" }, method = RequestMethod.GET)
 	public String newEmployee(ModelMap model) {
 		Employee employee = new Employee();
@@ -48,41 +48,44 @@ public class EmployeeController {
 		model.addAttribute("edit", false);
 		return "registration";
 	}
-	
-    /*
-     * This method will be called on form submission, handling POST request for
-     * saving employee in database. It also validates the user input.
-     */
+
+	/*
+	 * This method will be called on form submission, handling POST request for
+	 * saving employee in database. It also validates the user input.
+	 */
 	@RequestMapping(value = { "/new" }, method = RequestMethod.POST)
 	public String saveEmployee(@Valid Employee employee, BindingResult result, ModelMap model) {
-		
-		if(result.hasErrors()) {
+
+		if (result.hasErrors()) {
 			return "registration";
 		}
-		
-        /*
-         * Preferred way to achieve uniqueness of field [ssn] should be implementing custom @Unique annotation 
-         * and applying it on field [ssn] of Model class [Employee].
-         * 
-         * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
-         * framework as well while still using internationalized messages.
-         * 
-         */
-		if(!service.isEmployeeSsnUnique(employee.getId(), employee.getSsn())) {
-			FieldError ssnError = new FieldError("employee", "ssn", messageSource.getMessage("non.unique.ssn", new String[] {employee.getSsn()}, Locale.getDefault()));
+
+		/*
+		 * Preferred way to achieve uniqueness of field [ssn] should be implementing
+		 * custom @Unique annotation and applying it on field [ssn] of Model class
+		 * [Employee].
+		 * 
+		 * Below mentioned peace of code [if block] is to demonstrate that you can fill
+		 * custom errors outside the validation framework as well while still using
+		 * internationalized messages.
+		 * 
+		 */
+		if (!service.isEmployeeSsnUnique(employee.getId(), employee.getSsn())) {
+			FieldError ssnError = new FieldError("employee", "ssn", messageSource.getMessage("non.unique.ssn",
+					new String[] { employee.getSsn() }, Locale.getDefault()));
 			result.addError(ssnError);
 			return "registration";
 		}
-		
+
 		service.saveEmployee(employee);
-		
+
 		model.addAttribute("success", "Employee " + employee.getName() + " registered successfully");
 		return "registrationsuccess";
 	}
-	
-    /*
-     * This method will provide the medium to update an existing employee.
-     */
+
+	/*
+	 * This method will provide the medium to update an existing employee.
+	 */
 	@RequestMapping(value = { "/edit-{ssn}-employee" }, method = RequestMethod.GET)
 	public String editEmployee(@PathVariable String ssn, ModelMap model) {
 		Employee employee = service.findBySsn(ssn);
@@ -90,30 +93,39 @@ public class EmployeeController {
 		model.addAttribute("edit", true);
 		return "registration";
 	}
-	
-    /*
-     * This method will be called on form submission, handling POST request for
-     * updating employee in database. It also validates the user input
-     */
+
+	/*
+	 * This method will be called on form submission, handling POST request for
+	 * updating employee in database. It also validates the user input
+	 */
 	@RequestMapping(value = { "/edit-{ssn}-employee" }, method = RequestMethod.POST)
-	public String updateEmployee(@Valid Employee employee, BindingResult result,
-			ModelMap model, @PathVariable String ssn) {
-		
-		if(result.hasErrors()) {
+	public String updateEmployee(@Valid Employee employee, BindingResult result, ModelMap model,
+			@PathVariable String ssn) {
+
+		if (result.hasErrors()) {
 			return "registration";
 		}
-		
-		if(!service.isEmployeeSsnUnique(employee.getId(), employee.getSsn())) {
-			FieldError ssnError = new FieldError("employee", "ssn", messageSource.getMessage("non.unique.ssn", new String[] {employee.getSsn()}, Locale.getDefault()));
+
+		if (!service.isEmployeeSsnUnique(employee.getId(), employee.getSsn())) {
+			FieldError ssnError = new FieldError("employee", "ssn", messageSource.getMessage("non.unique.ssn",
+					new String[] { employee.getSsn() }, Locale.getDefault()));
 			result.addError(ssnError);
 			return "registration";
 		}
-		
+
 		service.updateEmployee(employee);
-		
+
 		model.addAttribute("success", "Employee " + employee.getName() + " updated succesfully");
 		return "registrationsuccess";
 	}
-	
-	
+
+	/*
+	 * This method will delete an employee by it's SSN value.
+	 */
+	@RequestMapping(value = { "/delete-{ssn}-employee" }, method = RequestMethod.GET)
+	public String deleteEmployee(@PathVariable String ssn) {
+		service.deleteEmployeeBySsn(ssn);
+		return "redirect:/list";
+	}
+
 }
