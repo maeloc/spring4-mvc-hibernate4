@@ -73,10 +73,10 @@ public class EmployeeController {
 			return "registration";
 		}
 		
-		service.updateEmployee(employee);
+		service.saveEmployee(employee);
 		
 		model.addAttribute("success", "Employee " + employee.getName() + " registered successfully");
-		return "registrationsucces";
+		return "registrationsuccess";
 	}
 	
 	
