@@ -10,7 +10,6 @@
     <title>Employee Registration Form</title>
  
 <style>
- 
     .error {
         color: #ff0000;
     }
