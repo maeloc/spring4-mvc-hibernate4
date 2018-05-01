@@ -112,6 +112,20 @@ public class Employee {
 		return true;
 	}
 
+	
+	public Employee() {
+		super();
+	}
+
+	public Employee(int id, String name, LocalDate joiningDate, BigDecimal salary, String ssn) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.joiningDate = joiningDate;
+		this.salary = salary;
+		this.ssn = ssn;
+	}
+
 	@Override
 	public String toString() {
 		return "Employee [id=" + id + ", name=" + name + ", joiningDate=" + joiningDate + ", salary=" + salary
