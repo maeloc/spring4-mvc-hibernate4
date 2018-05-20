@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -47,10 +48,20 @@ public class EmployeeControllerTest {
 	@Test
 	public void listEmployees_ShouldAddAllEmployeesToModelAndRenderAllEmployeesViewTest() throws Exception {
 		// Arrange the mock behaviour
-		Employee employee1 = new Employee(1, "Lorreine Pascale", new LocalDate("2012-04-28"), new BigDecimal(26000.99), "0005");
-		Employee employee2 = new Employee(1, "Julius", new LocalDate("2015-03-23"), new BigDecimal(29000.99), "0006");
+		List<Employee> employees = Arrays.asList(
+				new Employee.EmployeeBuilder(1).withName("Lorreine Pascale")
+						.withJoiningDate(new LocalDate("2012-04-28"))
+						.withSalary(new BigDecimal(26000.99))
+						.withSsn("0005")
+						.build(),
+				new Employee.EmployeeBuilder(1).withName("Julius")
+						.withJoiningDate(new LocalDate("2015-03-23"))
+						.withSalary(new BigDecimal(29000.99))
+						.withSsn("0006")
+						.build()
+		); 
 		
-		Mockito.when(employeeServiceMock.findAllEmployees()).thenReturn(Arrays.asList(employee1, employee2));
+		Mockito.when(employeeServiceMock.findAllEmployees()).thenReturn(employees);
 		
 		// Act (perform the mvc request) and Assert results
 		mockMvc.perform(get("/"))
