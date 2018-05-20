@@ -132,4 +132,53 @@ public class Employee {
 				+ ", ssn=" + ssn + "]";
 	}
 
+    public static class EmployeeBuilder {
+        private int id;
+        private String name;
+        private LocalDate joiningDate;
+        private BigDecimal salary;
+        private String ssn;
+
+        public EmployeeBuilder() {}
+
+        public EmployeeBuilder(int id) {
+            this.id = id;
+        }
+
+        public EmployeeBuilder withId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public EmployeeBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public EmployeeBuilder withJoiningDate(LocalDate joiningDate) {
+            this.joiningDate = joiningDate;
+            return this;
+        }
+
+        public EmployeeBuilder withSalary(BigDecimal salary) {
+        	this.salary = salary;
+        	return this;
+        }
+        
+        public EmployeeBuilder withSsn(String ssn) {
+        	this.ssn = ssn;
+        	return this;
+        }
+        
+        public Employee build() {
+            Employee emp = new Employee();
+            emp.setId(id);
+            emp.setName(name);
+            emp.setJoiningDate(joiningDate);
+            emp.setSalary(salary);
+            emp.setSsn(ssn);
+            return emp;
+        }
+    }	
+	
 }
